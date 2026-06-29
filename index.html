@@ -188,6 +188,15 @@
       <!-- SETUP TAB -->
       <div id="atab-setup">
         <div class="admin-section">
+          <div class="admin-section-title">Season</div>
+          <div style="font-size:13px;color:#8b949e;margin-bottom:8px;">Current season: <strong style="color:#e6edf3;" id="season-display"></strong> — increment this each year to reset all participant submissions automatically.</div>
+          <div class="flex-row">
+            <input class="form-input" id="season-input" style="max-width:120px;" placeholder="e.g. 2026"/>
+            <button class="btn btn-primary" onclick="saveSeason()">Update season</button>
+          </div>
+          <span id="season-msg" style="font-size:13px;margin-top:8px;display:block;"></span>
+        </div>
+        <div class="admin-section">
           <div class="admin-section-title">Ship names (enter when announced)</div>
           <div id="ship-inputs" class="admin-grid"></div>
           <button class="btn btn-primary" style="margin-top:12px;" onclick="saveShips()">Save ships</button>
@@ -289,12 +298,14 @@ const ROUND_NAMES = ['Round 1','Round 2','Semi-Finals','Final'];
 const ROUND_POINTS = [1,2,4,8];
 
 let SB_URL='https://tqksnctcqejmgwanvzqz.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxa3NuY3RjcWVqbWd3YW52enF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2ODIxOTUsImV4cCI6MjA5ODI1ODE5NX0.wi8ZbITvmOq2MLqB1CDz_zJ3kJSrJLpfSw4-3rWWAA4', ADMIN_PW='admin123';
+const SEASON='2025';
 let ships=Array(16).fill('');
 let servers=[], deadline=null, results={}, myPicks={}, submittedEntry=null;
 
-function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){} }
+function ls(k,v){ try{ const sk=SEASON+'_'+k; if(v===undefined) return localStorage.getItem(sk); localStorage.setItem(sk,v); }catch(e){} }
 
 function init(){
+  try{ const s=localStorage.getItem('sc_season'); if(s) { Object.defineProperty(window,'SEASON',{value:s,writable:false,configurable:true}); } }catch(e){}
   try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||SB_URL; SB_KEY=c.key||SB_KEY; ADMIN_PW=c.pw||ADMIN_PW; }catch(e){}
   try{ submittedEntry=JSON.parse(ls('sc_sub')||'null'); }catch(e){}
   loadContestData();
@@ -482,6 +493,16 @@ async function loadLeaderboard(){
   }catch(e){ el.innerHTML='<div class="empty-state" style="color:#f85149;">Load failed: '+e.message+'</div>'; }
 }
 
+function saveSeason(){
+  const val=(document.getElementById('season-input').value||'').trim();
+  const msg=document.getElementById('season-msg');
+  if(!val){ msg.textContent='Enter a season value.'; msg.style.color='#f85149'; setTimeout(()=>msg.textContent='',2000); return; }
+  // Update the SEASON constant by storing in a non-scoped key
+  localStorage.setItem('sc_season', val);
+  msg.textContent='Season updated to '+val+'. Reload the page to apply.'; msg.style.color='#3fb950';
+  setTimeout(()=>msg.textContent='',4000);
+}
+
 function adminLogin(){
   const pw=document.getElementById('admin-pw').value;
   if(pw===ADMIN_PW){ document.getElementById('admin-login').style.display='none'; document.getElementById('admin-panel').style.display='block'; initAdmin(); }
@@ -490,6 +511,10 @@ function adminLogin(){
 
 function initAdmin(){
   renderShipInputs(); renderServerList(); renderResultsPanel();
+  const seasonEl=document.getElementById('season-display');
+  const seasonInput=document.getElementById('season-input');
+  if(seasonEl) seasonEl.textContent=SEASON;
+  if(seasonInput) seasonInput.value=SEASON;
   if(SB_URL) document.getElementById('sb-url').value=SB_URL;
   if(SB_KEY) document.getElementById('sb-key').value=SB_KEY;
   document.getElementById('sb-admin-pw').value=ADMIN_PW;
