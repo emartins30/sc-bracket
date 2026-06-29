@@ -298,14 +298,13 @@ const ROUND_NAMES = ['Round 1','Round 2','Semi-Finals','Final'];
 const ROUND_POINTS = [1,2,4,8];
 
 let SB_URL='https://tqksnctcqejmgwanvzqz.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRxa3NuY3RjcWVqbWd3YW52enF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2ODIxOTUsImV4cCI6MjA5ODI1ODE5NX0.wi8ZbITvmOq2MLqB1CDz_zJ3kJSrJLpfSw4-3rWWAA4', ADMIN_PW='admin123';
-const SEASON='2025';
+const SEASON=localStorage.getItem('sc_season')||'2025';
 let ships=Array(16).fill('');
 let servers=[], deadline=null, results={}, myPicks={}, submittedEntry=null;
 
 function ls(k,v){ try{ const sk=SEASON+'_'+k; if(v===undefined) return localStorage.getItem(sk); localStorage.setItem(sk,v); }catch(e){} }
 
 function init(){
-  try{ const s=localStorage.getItem('sc_season'); if(s) { Object.defineProperty(window,'SEASON',{value:s,writable:false,configurable:true}); } }catch(e){}
   try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||SB_URL; SB_KEY=c.key||SB_KEY; ADMIN_PW=c.pw||ADMIN_PW; }catch(e){}
   try{ submittedEntry=JSON.parse(ls('sc_sub')||'null'); }catch(e){}
   loadContestData();
