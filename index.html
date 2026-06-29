@@ -295,7 +295,7 @@ let servers=[], deadline=null, results={}, myPicks={}, submittedEntry=null;
 function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){} }
 
 function init(){
-  try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||''; SB_KEY=c.key||''; ADMIN_PW=c.pw||'admin123'; }catch(e){}
+  try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||SB_URL; SB_KEY=c.key||SB_KEY; ADMIN_PW=c.pw||ADMIN_PW; }catch(e){}
   try{ submittedEntry=JSON.parse(ls('sc_sub')||'null'); }catch(e){}
   loadContestData();
 }
