@@ -520,7 +520,7 @@ async function saveShips(){
 async function saveDeadline(){
   const date=document.getElementById('deadline-date').value, time=document.getElementById('deadline-time').value;
   if(!date||!time) return;
-  const iso=new Date(date+'T'+time+':00-05:00').toISOString(); deadline=iso;
+  const iso=new Date(date+'T'+time+':00').toISOString(); deadline=iso;
   try{ await cfgSet('deadline',iso); const d=new Date(iso); document.getElementById('current-deadline').textContent='Set: '+d.toLocaleString('en-US',{timeZone:'America/New_York',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}); updateStatusBar(); }
   catch(e){ document.getElementById('current-deadline').textContent='Error: '+e.message; }
 }
