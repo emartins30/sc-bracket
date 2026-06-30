@@ -281,11 +281,13 @@ alter table contest_config enable row level security;
 drop policy if exists "public_insert" on entries;
 drop policy if exists "public_select" on entries;
 drop policy if exists "public_update" on entries;
+drop policy if exists "public_delete" on entries;
 drop policy if exists "public_all" on contest_config;
 
 create policy "public_insert" on entries for insert with check (true);
 create policy "public_select" on entries for select using (true);
 create policy "public_update" on entries for update using (true);
+create policy "public_delete" on entries for delete using (true);
 create policy "public_all" on contest_config for all using (true) with check (true);</pre>
         </div>
       </div>
