@@ -493,6 +493,14 @@ async function loadLeaderboard(){
   }catch(e){ el.innerHTML='<div class="empty-state" style="color:#f85149;">Load failed: '+e.message+'</div>'; }
 }
 
+async function removeEntry(id, name){
+  if(!confirm('Remove '+name+' from the contest?')) return;
+  try{
+    await sb('entries?id=eq.'+id,{method:'DELETE',extraHeaders:{'Prefer':'return=minimal'}});
+    loadEntries();
+  }catch(e){ alert('Error: '+e.message); }
+}
+
 function saveSeason(){
   const val=(document.getElementById('season-input').value||'').trim();
   const msg=document.getElementById('season-msg');
@@ -627,8 +635,8 @@ async function loadEntries(){
     const entries=await sb('entries?select=discord_name,server_name,score,submitted_at&order=submitted_at.desc');
     cnt.textContent=(entries?.length||0)+' entries total';
     if(!entries?.length){ el.innerHTML='<div class="empty-state">No entries yet.</div>'; return; }
-    el.innerHTML='<table class="leaderboard-table"><thead><tr><th>Discord</th><th>Server</th><th>Score</th><th>Submitted</th></tr></thead><tbody>'+
-      entries.map(e=>`<tr><td style="font-weight:500;">${e.discord_name}</td><td><span class="server-tag">${e.server_name}</span></td><td><span class="score-pill">${e.score}</span></td><td style="font-size:12px;color:#8b949e;">${new Date(e.submitted_at).toLocaleDateString()}</td></tr>`).join('')+
+    el.innerHTML='<table class="leaderboard-table"><thead><tr><th>Discord</th><th>Server</th><th>Score</th><th>Submitted</th><th></th></tr></thead><tbody>'+
+      entries.map(e=>`<tr><td style="font-weight:500;">${e.discord_name}</td><td><span class="server-tag">${e.server_name}</span></td><td><span class="score-pill">${e.score}</span></td><td style="font-size:12px;color:#8b949e;">${new Date(e.submitted_at).toLocaleDateString()}</td><td><button class="btn btn-sm" style="background:#2d0f0f;border:1px solid #da3633;color:#f85149;" onclick="removeEntry('${e.id}','${e.discord_name}')">Remove</button></td></tr>`).join('')+
       '</tbody></table>';
   }catch(e){ el.innerHTML='<div style="color:#f85149;font-size:13px;">Error: '+e.message+'</div>'; }
 }
