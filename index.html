@@ -305,7 +305,8 @@ let servers=[], deadline=null, results={}, myPicks={}, submittedEntry=null;
 function ls(k,v){ try{ const sk=SEASON+'_'+k; if(v===undefined) return localStorage.getItem(sk); localStorage.setItem(sk,v); }catch(e){} }
 
 function init(){
-  try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||SB_URL; SB_KEY=c.key||SB_KEY; ADMIN_PW=c.pw||ADMIN_PW; }catch(e){}
+  try{ const c=JSON.parse(ls('sc_cfg')||'{}'); SB_URL=c.url||SB_URL; SB_KEY=c.key||SB_KEY; }catch(e){}
+  try{ const pw=localStorage.getItem('sc_pw'); if(pw) ADMIN_PW=pw; }catch(e){}
   try{ submittedEntry=JSON.parse(ls('sc_sub')||'null'); }catch(e){}
   loadContestData();
 }
@@ -641,7 +642,7 @@ async function saveConfig(){
   SB_URL=url; SB_KEY=key; ADMIN_PW=pw;
   try{
     await sb('contest_config?limit=1');
-    ls('sc_cfg',JSON.stringify({url,key,pw}));
+    ls('sc_cfg',JSON.stringify({url,key})); localStorage.setItem('sc_pw',pw);
     updateConnBadge('ok'); msg.textContent='Connected. Loading data...'; msg.style.color='#3fb950';
     await loadContestData(); initAdmin();
     msg.textContent='Connected and ready.'; msg.style.color='#3fb950';
