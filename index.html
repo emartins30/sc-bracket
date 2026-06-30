@@ -632,7 +632,7 @@ async function loadEntries(){
   if(!SB_URL||!SB_KEY){ el.innerHTML='<div style="color:#8b949e;font-size:13px;">No database configured.</div>'; return; }
   el.innerHTML='<div style="color:#8b949e;font-size:13px;">Loading...</div>';
   try{
-    const entries=await sb('entries?select=discord_name,server_name,score,submitted_at&order=submitted_at.desc');
+    const entries=await sb('entries?select=id,discord_name,server_name,score,submitted_at&order=submitted_at.desc');
     cnt.textContent=(entries?.length||0)+' entries total';
     if(!entries?.length){ el.innerHTML='<div class="empty-state">No entries yet.</div>'; return; }
     el.innerHTML='<table class="leaderboard-table"><thead><tr><th>Discord</th><th>Server</th><th>Score</th><th>Submitted</th><th></th></tr></thead><tbody>'+
